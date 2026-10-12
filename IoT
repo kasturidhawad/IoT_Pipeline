@@ -1,0 +1,31 @@
+from pyspark import pipelines as dp
+from pyspark.sql.functions import col, sum as sum_, round as round_
+
+@dp.materialized_view(name="device_activity_bronze")
+def device_activity_bronze():
+    return spark.read.json("/databricks-datasets/iot-stream/data-device/")
+
+
+@dp.materialized_view(name="device_activity_silver")
+def device_activity_silver():
+    return (
+        spark.read.table("device_activity_bronze")
+        .filter(col("device_id").isNotNull())
+        .filter(col("user_id").isNotNull())
+        .filter(col("num_steps") >= 0)
+        .filter(col("calories_burnt") >= 0)
+        .dropDuplicates(["id"])
+    )
+
+
+@dp.materialized_view(name="device_metrics_gold")
+def device_metrics_gold():
+    return (
+        spark.read.table("device_activity_silver")
+        .groupBy("device_id")
+        .agg(
+            sum_("num_steps").alias("total_steps"),
+            round_(sum_("calories_burnt"), 2).alias("total_calories_burnt"),
+            round_(sum_("miles_walked"), 2).alias("total_miles_walked")
+        )
+    )
