@@ -1,0 +1,12 @@
+resources:
+  jobs:
+    job_demo:
+      name: job_demo_
+      tasks:
+        - task_key: hi_ho
+          notebook_task:
+            notebook_path: ../notebooks/notebook_demo.py
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED

@@ -1,0 +1,20 @@
+
+bundle:
+  name: DABsDemo
+
+include:
+  - src/*.yml
+  - src/env/*.yml
+  - resources/jobs/*.yml
+  - resources/pipeline/*.yml
+
+permissions:
+  - user_name: kasturidhawad@gmail.com
+    level: CAN_MANAGE
+
+targets:
+  workspace:
+    mode: development
+    default: true
+    workspace:
+       host: https://dbc-678a54c7-0739.cloud.databricks.com
